@@ -1,12 +1,15 @@
 # python-functools-too
+
 Additional higher-order functions and operations on callable objects for Python
 
 Note: This project is not yet built as a package or uploaded to PyPi,
 so if you want to use it now, you should do so by copying its code
 into your project.
 
+
 Decorators
 ==========
+
 
 `@bind_call_params`
 ---------------------------------
@@ -30,6 +33,68 @@ Example:
     @cache
     def example(a, b='<b>', /, c='<c>', *, d='<d>'):
         return (datetime.now(), a, b, c, d)
+
+
+`@cached_static_method`
+---------------------------------
+
+Transform a method to a static-method cache, optionally based on
+parameters in bound-argument form.
+
+When used as a decorator, transforms the method into a static method
+that caches results for parameters in the form in which they are given
+(which are positional vs keyword).
+
+When called as a function, returns a decorator that transforms a method
+into a static method that caches results for parameters, either in
+their given form (default or 'bind\_args=False') or in their bound form
+('bind\_args=True').
+
+
+`@cached_class_method`
+----------------------
+
+Transform a method to a class-method cache, optionally based on
+parameters in bound-argument form.
+
+When used as a decorator, transforms the method into a class method
+that caches results for the combination of target class and passed
+parameters in the form in which they are given (which are passed as
+positional vs keyword).
+
+When called as a function, returns a decorator that transforms a method
+into a class method that caches results for the combination of target
+class and passed parameters, either in their given form (default or
+'bind\_args=False') or in their bound form ('bind\_args=True').
+
+
+`@cached_class_property`
+------------------------
+
+Transform a method of a class into a property whose value is computed
+once and then cached separately for the class and each subclass.
+
+
+`@cached_static_property`
+-------------------------
+
+Transform a method of a class into a property whose value is computed
+once and then cached statically.
+
+Whether the property is first accessed through the base class or an
+inheriting class, the computed value is cached once for the base class
+and all of its descendants.
+
+
+`@class_property`
+-----------------
+
+Transform a method into a class property.
+
+A convenience decorator that behaves the same as decorating with
+'@classmethod' followed by '@property' but without having to remember
+which comes first.
+
 
 `@per_target_decorated_method(decorator=<decorator>)`
 -----------------------------------------------------

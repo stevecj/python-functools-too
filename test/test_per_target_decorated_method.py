@@ -10,14 +10,12 @@ class TestPerTargetDecoratedMethod(unittest.TestCase):
 
     def setUp(self):
         self.example_decorator_call_count = 0
-        self.example_decorated_call_count = 0
 
         def example_decorator(func):
             self.example_decorator_call_count += 1
 
             @wraps(func)
             def wrapped(*args, **kwargs):
-                self.example_decorated_call_count += 1
                 func(*args, **kwargs)
 
             return wrapped

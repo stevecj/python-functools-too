@@ -3,8 +3,20 @@ from inspect import signature
 from weakref import ref, WeakKeyDictionary
 
 __all__ = [
-    'bind_call_params', 'per_target_decorated_method',
-    'cached_static_method', 'cached_class_method']
+    'bind_call_params', 'cached_static_method', 'cached_class_method',
+    'cached_class_property', 'cached_static_property', 'class_property',
+    'per_target_decorated_method']
+
+
+def class_property(func):
+    """
+    Transform a method into a class property.
+
+    A convenience decorator that behaves the same as decorating with
+    '@classmethod' followed by '@property' but without having to remember
+    which comes first.
+    """
+    return classmethod(property(func))
 
 
 def bind_call_params(func):
@@ -167,3 +179,52 @@ def cached_class_method(func=None, /, *, bind_args=False):
                     per_target_decorated_method(decorator=cache)(func))
 
         return decorator
+
+
+class cached_static_property:
+    """
+    Transform a method of a class into a property whose value is computed
+    once and then cached statically.
+
+    Whether the property is first accessed through the base class or an
+    inheriting class, the computed value is cached once for the base class
+    and all of its descendants.
+    """
+    def __init__(self, func):
+        self.func = func
+        self.cache = []
+
+    def __get__(self, obj, objtype=None):
+        if self.cache:
+            return self.cache[0]
+        else:
+            value = self.func()
+            self.cache.append(value)
+            return value
+
+
+def cached_class_property(func):
+    """
+    Transform a method of a class into a property whose value is computed
+    once and then cached separately for the class and each subclass.
+    """
+    def per_target_caching_deco(func):
+        cache = []
+
+        @wraps(func)
+        def wrapper(cls):
+            if cache:
+                return cache[0]
+            else:
+                value = func(cls)
+                cache.append(value)
+                return value
+
+        return wrapper
+
+    @class_property
+    @per_target_decorated_method(decorator=per_target_caching_deco)
+    def wrapper(cls):
+        return func(cls)
+
+    return wrapper
