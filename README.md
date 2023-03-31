@@ -15,13 +15,14 @@ Decorators
 ---------------------------------
 
 Transform a function to always receive its arguments in the same form
-(which are positional and which are keyword) even if its
-implementation is less strict than what is described by its
-signature.
+(which are positional and which are keyword) even if its implementation
+is less strict than what is described by its signature.
 
 This is for use where where the form in which the parameters are passed
 may be significant to its decorator (e.g. '@functools.cache' or
-'functools.lru\_cache').
+'functools.lru\_cache') and we want that form to be determined by the
+signature of the called function and not how they are given by the
+caller.
 
 Example:
 
@@ -39,7 +40,7 @@ Example:
 ---------------------------------
 
 Transform a method to a static-method cache, optionally based on
-parameters in bound-argument form.
+parameters in bound-argument form (see `@bind_call_params`),
 
 When used as a decorator, transforms the method into a static method
 that caches results for parameters in the form in which they are given
@@ -55,12 +56,12 @@ their given form (default or 'bind\_args=False') or in their bound form
 ----------------------
 
 Transform a method to a class-method cache, optionally based on
-parameters in bound-argument form.
+parameters in bound-argument form (see `@bind_call_params`),
 
 When used as a decorator, transforms the method into a class method
 that caches results for the combination of target class and passed
-parameters in the form in which they are given (which are passed as
-positional vs keyword).
+parameters in the form in which they are given (which of then are
+passed as positional vs keyword).
 
 When called as a function, returns a decorator that transforms a method
 into a class method that caches results for the combination of target
